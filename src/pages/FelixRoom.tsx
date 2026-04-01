@@ -1,44 +1,16 @@
 import { useState } from "react";
 import FelixCharacter from "@/components/FelixCharacter";
 
-const roomBgUrl = "https://cdn.poehali.dev/projects/feb7d517-61be-4268-a08e-6633bf1c3a57/bucket/a89d0fae-917e-420a-a044-04000f54c32f.png";
+const roomBgUrl =
+  "https://cdn.poehali.dev/projects/feb7d517-61be-4268-a08e-6633bf1c3a57/bucket/a89d0fae-917e-420a-a044-04000f54c32f.png";
 
-type Screen = "room" | "adventure" | "training" | "shop" | "rewards" | "settings";
-
-const navItems = [
-  {
-    id: "adventure" as Screen,
-    emoji: "🗺️",
-    label: "Приключение",
-    color: "#FF8C42",
-    shadow: "#CC6422",
-    bg: "linear-gradient(135deg, #FF8C42, #FF6B1A)",
-  },
-  {
-    id: "training" as Screen,
-    emoji: "💪",
-    label: "Тренировка",
-    color: "#3DCC6A",
-    shadow: "#2BAA54",
-    bg: "linear-gradient(135deg, #3DCC6A, #20AA50)",
-  },
-  {
-    id: "shop" as Screen,
-    emoji: "🛍️",
-    label: "Магазин",
-    color: "#9B6DFF",
-    shadow: "#7040E6",
-    bg: "linear-gradient(135deg, #9B6DFF, #7040E6)",
-  },
-  {
-    id: "rewards" as Screen,
-    emoji: "🏆",
-    label: "Награды",
-    color: "#FFD700",
-    shadow: "#CC9900",
-    bg: "linear-gradient(135deg, #FFD700, #FFA500)",
-  },
-];
+type Screen =
+  | "room"
+  | "adventure"
+  | "training"
+  | "shop"
+  | "rewards"
+  | "settings";
 
 interface FelixRoomProps {
   age: string;
@@ -48,15 +20,18 @@ interface FelixRoomProps {
 
 export default function FelixRoom({ age, gems, onNavigate }: FelixRoomProps) {
   const [felixTalking, setFelixTalking] = useState(false);
-  const [felixState, setFelixState] = useState<"idle" | "wave" | "talk" | "happy">("idle");
+  const [felixState, setFelixState] = useState<
+    "idle" | "wave" | "talk" | "happy"
+  >("idle");
+  const [hint, setHint] = useState("Привет! Нажми на предмет в комнате ✨");
   const [speech, setSpeech] = useState("");
 
   const speeches = [
-    "Привет! Я так рад тебя видеть! 😺",
-    "Сегодня мы узнаем что-то новое! ⭐",
-    "Ты молодец! Продолжай учиться! 🎉",
-    "Готов к приключению? Пошли! 🚀",
-    "Мяу! Давай поиграем! 🎮",
+    "Привет! Чем займёмся сегодня? 😺",
+    "Готов к новым знаниям? ⭐",
+    "Пойдём в приключение? 🚀",
+    "Хочешь потренироваться? 📚",
+    "Я очень рад тебя видеть! 💛",
   ];
 
   const handleFelixClick = () => {
@@ -64,41 +39,52 @@ export default function FelixRoom({ age, gems, onNavigate }: FelixRoomProps) {
     setSpeech(randomSpeech);
     setFelixTalking(true);
     setFelixState("talk");
+    setHint("Нажми на дверь или книжный шкаф");
     setTimeout(() => {
       setFelixTalking(false);
       setFelixState("idle");
-    }, 2500);
+    }, 2200);
+  };
+
+  const soon = (text: string) => {
+    setHint(text);
+    setFelixState("wave");
+    setTimeout(() => setFelixState("idle"), 1200);
   };
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden select-none">
-      {/* Room background */}
+    <div className="min-h-screen relative overflow-hidden select-none bg-[#dff7f4]">
+      {/* Background */}
       <div className="absolute inset-0">
         <img
           src={roomBgUrl}
           alt="Комната Феликса"
           className="w-full h-full object-cover"
         />
-        {/* Overlay for better UI readability */}
-        <div className="absolute inset-0"
-          style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.05) 60%, rgba(0,0,0,0.4) 100%)" }}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.02) 55%, rgba(0,0,0,0.08) 100%)",
+          }}
         />
       </div>
 
       {/* Top HUD */}
-      <div className="relative z-10 flex items-center justify-between px-4 pt-3 pb-2">
-        {/* Gems counter */}
+      <div className="relative z-20 flex items-center justify-between px-4 pt-3">
         <div
           className="flex items-center gap-2 px-4 py-2 rounded-2xl font-bold text-white text-sm"
           style={{
-            background: "rgba(30, 80, 120, 0.75)",
+            background: "rgba(30, 80, 120, 0.72)",
             backdropFilter: "blur(8px)",
-            border: "2px solid rgba(100,200,255,0.4)",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+            border: "2px solid rgba(100,200,255,0.35)",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.22)",
           }}
         >
-          <span className="text-xl animate-float">💎</span>
-          <span className="text-lg font-black text-sky-200">{String(gems).padStart(3, "0")}</span>
+          <span className="text-xl">💎</span>
+          <span className="text-lg font-black text-sky-200">
+            {String(gems).padStart(3, "0")}
+          </span>
           <button
             className="w-6 h-6 rounded-full bg-white/20 hover:bg-white/40 transition-colors text-white font-black text-sm"
             onClick={() => onNavigate("shop")}
@@ -107,11 +93,10 @@ export default function FelixRoom({ age, gems, onNavigate }: FelixRoomProps) {
           </button>
         </div>
 
-        {/* Age badge */}
         <div
           className="px-3 py-1.5 rounded-2xl text-xs font-bold text-white"
           style={{
-            background: "rgba(45, 196, 186, 0.8)",
+            background: "rgba(45, 196, 186, 0.78)",
             backdropFilter: "blur(8px)",
             border: "2px solid rgba(255,255,255,0.3)",
           }}
@@ -119,32 +104,40 @@ export default function FelixRoom({ age, gems, onNavigate }: FelixRoomProps) {
           {age} лет
         </div>
 
-        {/* Settings */}
         <button
           onClick={() => onNavigate("settings")}
           className="w-10 h-10 rounded-full flex items-center justify-center text-xl hover:scale-110 transition-transform"
           style={{
             background: "rgba(255,255,255,0.2)",
             backdropFilter: "blur(8px)",
-            border: "2px solid rgba(255,255,255,0.4)",
+            border: "2px solid rgba(255,255,255,0.38)",
           }}
         >
           ⚙️
         </button>
       </div>
 
-      {/* Felix speech bubble */}
-      {felixTalking && (
-        <div className="relative z-20 mx-auto mt-2 px-5 py-3 rounded-3xl text-teal-dark font-bold text-sm max-w-xs text-center animate-pop-in"
+      {/* Hint bubble */}
+      <div className="relative z-20 flex justify-center mt-3 px-4">
+        <div
+          className="px-5 py-3 rounded-3xl text-teal-800 font-bold text-sm text-center max-w-md"
           style={{
-            background: "white",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-            border: "3px solid #2DC4BA",
+            background: "rgba(255,255,255,0.9)",
+            boxShadow: "0 4px 18px rgba(0,0,0,0.12)",
+            border: "2px solid rgba(45,196,186,0.3)",
+            backdropFilter: "blur(10px)",
           }}
         >
+          {hint}
+        </div>
+      </div>
+
+      {/* Felix speech bubble */}
+      {felixTalking && (
+        <div className="absolute left-1/2 top-[18%] -translate-x-1/2 z-30 px-5 py-3 rounded-3xl text-teal-900 font-bold text-sm max-w-xs text-center bg-white shadow-xl border-2 border-[#2DC4BA] animate-[fadeIn_.2s_ease]">
           {speech}
-          {/* Speech bubble tail */}
-          <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0"
+          <div
+            className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0"
             style={{
               borderLeft: "10px solid transparent",
               borderRight: "10px solid transparent",
@@ -154,59 +147,76 @@ export default function FelixRoom({ age, gems, onNavigate }: FelixRoomProps) {
         </div>
       )}
 
-      {/* Spacer to push nav to bottom */}
-      <div className="flex-1" />
+      {/* Scene overlay */}
+      <div className="absolute inset-0 z-10">
+        {/* Bookcase -> Training */}
+        <button
+          onMouseEnter={() => setHint("📚 Книжный шкаф — тренируй любую тему")}
+          onMouseLeave={() => setHint("Привет! Нажми на предмет в комнате ✨")}
+          onClick={() => onNavigate("training")}
+          className="absolute left-[6%] top-[25%] w-[20%] h-[40%] rounded-[28px] hover:bg-white/10 transition"
+          aria-label="Тренировка"
+        />
 
-      {/* Bottom navigation */}
-      <div className="relative z-10 px-4 pb-5">
-        <div
-          className="rounded-3xl p-4"
-          style={{
-            background: "rgba(10, 40, 70, 0.6)",
-            backdropFilter: "blur(16px)",
-            border: "2px solid rgba(100,200,255,0.2)",
-            boxShadow: "0 -4px 30px rgba(0,0,0,0.3)",
-          }}
+        {/* Door -> Adventure */}
+        <button
+          onMouseEnter={() => setHint("🗺️ Дверь ведёт в миры знаний")}
+          onMouseLeave={() => setHint("Привет! Нажми на предмет в комнате ✨")}
+          onClick={() => onNavigate("adventure")}
+          className="absolute left-[36%] top-[18%] w-[24%] h-[46%] rounded-[32px] hover:bg-white/10 transition"
+          aria-label="Приключение"
+        />
+
+        {/* Trophy shelf -> Rewards */}
+        <button
+          onMouseEnter={() => setHint("🏆 Здесь живут награды Феликса")}
+          onMouseLeave={() => setHint("Привет! Нажми на предмет в комнате ✨")}
+          onClick={() => soon("🏆 Награды скоро станут активными")}
+          className="absolute right-[11%] top-[6%] w-[16%] h-[12%] rounded-[22px] hover:bg-white/10 transition"
+          aria-label="Награды"
+        />
+
+        {/* Achievement board -> Rewards soon */}
+        <button
+          onMouseEnter={() => setHint("⭐ Доска достижений")}
+          onMouseLeave={() => setHint("Привет! Нажми на предмет в комнате ✨")}
+          onClick={() => soon("⭐ Достижения скоро появятся")}
+          className="absolute right-[22%] top-[28%] w-[14%] h-[16%] rounded-[20px] hover:bg-white/10 transition"
+          aria-label="Достижения"
+        />
+
+        {/* Wardrobe -> Clothes soon */}
+        <button
+          onMouseEnter={() => setHint("👕 Гардероб Феликса")}
+          onMouseLeave={() => setHint("Привет! Нажми на предмет в комнате ✨")}
+          onClick={() => soon("👕 Гардероб скоро откроется")}
+          className="absolute right-[4%] top-[22%] w-[21%] h-[44%] rounded-[28px] hover:bg-white/10 transition"
+          aria-label="Одежда"
+        />
+
+        {/* Chest -> Shop */}
+        <button
+          onMouseEnter={() => setHint("💎 Сундук — магазин и сокровища")}
+          onMouseLeave={() => setHint("Привет! Нажми на предмет в комнате ✨")}
+          onClick={() => onNavigate("shop")}
+          className="absolute right-[17%] bottom-[12%] w-[18%] h-[18%] rounded-[24px] hover:bg-white/10 transition"
+          aria-label="Магазин"
+        />
+      </div>
+
+      {/* Felix */}
+      <div className="absolute inset-x-0 bottom-[18%] z-20 flex justify-center pointer-events-none">
+        <button
+          onClick={handleFelixClick}
+          className="pointer-events-auto relative hover:scale-105 active:scale-95 transition-transform"
         >
-          {/* Felix clickable area at top of nav */}
-          <div className="flex justify-center mb-1">
-            <button
-              onClick={handleFelixClick}
-              className="relative hover:scale-105 active:scale-95 transition-transform"
-            >
-              <div className="text-center">
-                <span className="text-xs text-white/60 font-semibold block mb-1">
-                  Нажми на Феликса!
-                </span>
-                <FelixCharacter
-                  state={felixState}
-                  size={90}
-                  className="animate-bounce-soft"
-                />
-              </div>
-            </button>
-          </div>
-
-          {/* Nav grid */}
-          <div className="grid grid-cols-4 gap-3">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => onNavigate(item.id)}
-                className="room-nav-btn text-white"
-                style={{
-                  background: item.bg,
-                  boxShadow: `0 5px 0 ${item.shadow}`,
-                }}
-              >
-                <span className="text-2xl">{item.emoji}</span>
-                <span className="text-xs font-bold leading-tight text-center">
-                  {item.label}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
+          <div className="absolute inset-0 rounded-full blur-2xl bg-cyan-200/40 scale-110" />
+          <FelixCharacter
+            state={felixState}
+            size={180}
+            className="relative drop-shadow-2xl"
+          />
+        </button>
       </div>
     </div>
   );
