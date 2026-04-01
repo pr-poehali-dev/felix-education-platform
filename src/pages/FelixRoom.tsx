@@ -1,5 +1,4 @@
 import { useState } from "react";
-import FelixCharacter from "@/components/FelixCharacter";
 
 const roomBgUrl = "/images/room-clean.png";
 
@@ -202,13 +201,7 @@ export default function FelixRoom({ age, gems, onNavigate }: FelixRoomProps) {
         style={{ left: "50%", bottom: "6%", transform: "translateX(-50%)" }}
         onMouseEnter={() => setHint("😺 Нажми на кота!")}
         onMouseLeave={() => setHint("Привет! Нажми на предмет в комнате ✨")}
-      >
-        <FelixCharacter
-          state={felixTalking ? "talk" : "idle"}
-          onClick={handleFelixClick}
-          size={180}
-        />
-      </div>
+      />
     </div>
   );
 }
