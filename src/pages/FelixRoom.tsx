@@ -1,5 +1,4 @@
 import { useState } from "react";
-import FelixCharacter from "@/components/FelixCharacter";
 
 const roomBgUrl =
   "https://cdn.poehali.dev/projects/feb7d517-61be-4268-a08e-6633bf1c3a57/bucket/a89d0fae-917e-420a-a044-04000f54c32f.png";
@@ -20,9 +19,6 @@ interface FelixRoomProps {
 
 export default function FelixRoom({ age, gems, onNavigate }: FelixRoomProps) {
   const [felixTalking, setFelixTalking] = useState(false);
-  const [felixState, setFelixState] = useState<
-    "idle" | "wave" | "talk" | "happy"
-  >("idle");
   const [hint, setHint] = useState("Привет! Нажми на предмет в комнате ✨");
   const [speech, setSpeech] = useState("");
 
@@ -38,18 +34,14 @@ export default function FelixRoom({ age, gems, onNavigate }: FelixRoomProps) {
     const randomSpeech = speeches[Math.floor(Math.random() * speeches.length)];
     setSpeech(randomSpeech);
     setFelixTalking(true);
-    setFelixState("talk");
     setHint("Нажми на дверь или книжный шкаф");
     setTimeout(() => {
       setFelixTalking(false);
-      setFelixState("idle");
     }, 2200);
   };
 
   const soon = (text: string) => {
     setHint(text);
-    setFelixState("wave");
-    setTimeout(() => setFelixState("idle"), 1200);
   };
 
   return (
@@ -204,20 +196,15 @@ export default function FelixRoom({ age, gems, onNavigate }: FelixRoomProps) {
         />
       </div>
 
-      {/* Felix */}
-      <div className="absolute inset-x-0 bottom-[18%] z-20 flex justify-center pointer-events-none">
-        <button
-          onClick={handleFelixClick}
-          className="pointer-events-auto relative hover:scale-105 active:scale-95 transition-transform"
-        >
-          <div className="absolute inset-0 rounded-full blur-2xl bg-cyan-200/40 scale-110" />
-          <FelixCharacter
-            state={felixState}
-            size={180}
-            className="relative drop-shadow-2xl"
-          />
-        </button>
-      </div>
+      {/* Invisible clickable area over the cat on background */}
+      <button
+        onClick={handleFelixClick}
+        onMouseEnter={() => setHint("😺 Нажми на кота!")}
+        onMouseLeave={() => setHint("Привет! Нажми на предмет в комнате ✨")}
+        className="absolute z-20 rounded-full hover:bg-white/10 active:bg-white/20 transition"
+        style={{ left: "38%", bottom: "10%", width: "24%", height: "32%" }}
+        aria-label="Феликс"
+      />
     </div>
   );
 }

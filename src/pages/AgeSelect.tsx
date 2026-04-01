@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import FelixCharacter from "@/components/FelixCharacter";
 import { useVoice } from "@/hooks/useVoice";
 
 const ageGroups = [
@@ -71,7 +70,7 @@ interface AgeSelectProps {
 
 export default function AgeSelect({ onSelect }: AgeSelectProps) {
   const [selected, setSelected] = useState<string | null>(null);
-  const [felixState, setFelixState] = useState<"idle" | "wave" | "talk">("wave");
+  const [catState, setCatState] = useState<"idle" | "wave" | "talk">("wave");
   const [speechBubble, setSpeechBubble] = useState<string | null>(null);
   const [hasGreeted, setHasGreeted] = useState(false);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -87,10 +86,10 @@ export default function AgeSelect({ onSelect }: AgeSelectProps) {
   useEffect(() => {
     // Wave for 1.5 seconds then speak greeting
     const waveTimer = setTimeout(() => {
-      setFelixState("talk");
+      setCatState("talk");
       setSpeechBubble("Привет! Я Феликс! Сколько тебе лет? 😺");
       speak("Привет! Я Феликс! Сколько тебе лет?", () => {
-        setFelixState("idle");
+        setCatState("idle");
         speechTimerRef.current = setTimeout(() => {
           setSpeechBubble(null);
           setHasGreeted(true);
@@ -105,12 +104,12 @@ export default function AgeSelect({ onSelect }: AgeSelectProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Sync felix talk state with isSpeaking
+  // Sync cat talk state with isSpeaking
   useEffect(() => {
-    if (isSpeaking && felixState !== "wave") {
-      setFelixState("talk");
+    if (isSpeaking && catState !== "wave") {
+      setCatState("talk");
     }
-  }, [isSpeaking, felixState]);
+  }, [isSpeaking, catState]);
 
   const handleSelect = (age: string) => {
     setSelected(age);
@@ -122,9 +121,9 @@ export default function AgeSelect({ onSelect }: AgeSelectProps) {
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
       hoverTimerRef.current = setTimeout(() => {
         setSpeechBubble(ageLabel + "! Отличный выбор! 😺");
-        setFelixState("talk");
+        setCatState("talk");
         speak(voiceText, () => {
-          setFelixState("idle");
+          setCatState("idle");
           speechTimerRef.current = setTimeout(() => setSpeechBubble(null), 600);
         });
       }, 250); // Small delay to avoid accidental triggers
@@ -140,10 +139,10 @@ export default function AgeSelect({ onSelect }: AgeSelectProps) {
     if (isSpeaking) return;
     const phrase = motivationalPhrases[Math.floor(Math.random() * motivationalPhrases.length)];
     setSpeechBubble(phrase);
-    setFelixState("talk");
+    setCatState("talk");
     const cleanPhrase = phrase.replace(/[\u{1F300}-\u{1FFFF}]/gu, "").trim();
     speak(cleanPhrase, () => {
-      setFelixState("idle");
+      setCatState("idle");
       speechTimerRef.current = setTimeout(() => setSpeechBubble(null), 800);
     });
   }, [isSpeaking, speak]);
@@ -230,25 +229,28 @@ export default function AgeSelect({ onSelect }: AgeSelectProps) {
           </div>
         )}
 
-        {/* Animated Felix */}
+        {/* Animated cat emoji */}
         <div
-          className="relative"
+          className="relative cursor-pointer select-none"
           style={{
+            fontSize: 130,
+            lineHeight: 1,
             animation:
-              felixState === "idle"
+              catState === "idle"
                 ? "felix-float 3s ease-in-out infinite"
-                : felixState === "wave"
+                : catState === "wave"
                 ? "felix-float-wave 0.6s ease-in-out infinite alternate"
                 : "none",
+            filter: catState === "talk" ? "drop-shadow(0 0 18px rgba(45,196,186,0.7))" : "drop-shadow(0 4px 12px rgba(0,0,0,0.15))",
+            transition: "filter 0.3s ease",
           }}
+          onClick={handleFelixClick}
+          role="button"
+          aria-label="Феликс"
         >
-          <FelixCharacter
-            state={felixState}
-            size={210}
-            onClick={handleFelixClick}
-          />
+          {catState === "wave" ? "🐱" : catState === "talk" ? "😸" : "😺"}
           {/* Glow ring when talking */}
-          {felixState === "talk" && (
+          {catState === "talk" && (
             <div
               className="absolute inset-0 rounded-full pointer-events-none"
               style={{
