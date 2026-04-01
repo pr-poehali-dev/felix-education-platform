@@ -1,7 +1,7 @@
 import { useState } from "react";
+import FelixCharacter from "@/components/FelixCharacter";
 
 const roomBgUrl = "https://cdn.poehali.dev/projects/feb7d517-61be-4268-a08e-6633bf1c3a57/bucket/a89d0fae-917e-420a-a044-04000f54c32f.png";
-const felixUrl = "https://cdn.poehali.dev/projects/feb7d517-61be-4268-a08e-6633bf1c3a57/bucket/f656c815-c777-43cd-8cb7-d4ffd86a5e6c.png";
 
 type Screen = "room" | "adventure" | "training" | "shop" | "rewards" | "settings";
 
@@ -48,6 +48,7 @@ interface FelixRoomProps {
 
 export default function FelixRoom({ age, gems, onNavigate }: FelixRoomProps) {
   const [felixTalking, setFelixTalking] = useState(false);
+  const [felixState, setFelixState] = useState<"idle" | "wave" | "talk" | "happy">("idle");
   const [speech, setSpeech] = useState("");
 
   const speeches = [
@@ -62,7 +63,11 @@ export default function FelixRoom({ age, gems, onNavigate }: FelixRoomProps) {
     const randomSpeech = speeches[Math.floor(Math.random() * speeches.length)];
     setSpeech(randomSpeech);
     setFelixTalking(true);
-    setTimeout(() => setFelixTalking(false), 2500);
+    setFelixState("talk");
+    setTimeout(() => {
+      setFelixTalking(false);
+      setFelixState("idle");
+    }, 2500);
   };
 
   return (
@@ -164,7 +169,7 @@ export default function FelixRoom({ age, gems, onNavigate }: FelixRoomProps) {
           }}
         >
           {/* Felix clickable area at top of nav */}
-          <div className="flex justify-center mb-3">
+          <div className="flex justify-center mb-1">
             <button
               onClick={handleFelixClick}
               className="relative hover:scale-105 active:scale-95 transition-transform"
@@ -173,7 +178,11 @@ export default function FelixRoom({ age, gems, onNavigate }: FelixRoomProps) {
                 <span className="text-xs text-white/60 font-semibold block mb-1">
                   Нажми на Феликса!
                 </span>
-                <div className="text-4xl animate-bounce-soft">😺</div>
+                <FelixCharacter
+                  state={felixState}
+                  size={90}
+                  className="animate-bounce-soft"
+                />
               </div>
             </button>
           </div>
