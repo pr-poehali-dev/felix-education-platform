@@ -1,7 +1,7 @@
 import { useState } from "react";
+import FelixCharacter from "@/components/FelixCharacter";
 
-const roomBgUrl =
-  "https://cdn.poehali.dev/projects/feb7d517-61be-4268-a08e-6633bf1c3a57/bucket/a89d0fae-917e-420a-a044-04000f54c32f.png";
+const roomBgUrl = "/images/room-clean.png";
 
 type Screen =
   | "room"
@@ -196,15 +196,19 @@ export default function FelixRoom({ age, gems, onNavigate }: FelixRoomProps) {
         />
       </div>
 
-      {/* Invisible clickable area over the cat on background */}
-      <button
-        onClick={handleFelixClick}
+      {/* Felix Character — centered on the rug */}
+      <div
+        className="absolute z-20 flex items-end justify-center"
+        style={{ left: "50%", bottom: "6%", transform: "translateX(-50%)" }}
         onMouseEnter={() => setHint("😺 Нажми на кота!")}
         onMouseLeave={() => setHint("Привет! Нажми на предмет в комнате ✨")}
-        className="absolute z-20 rounded-full hover:bg-white/10 active:bg-white/20 transition"
-        style={{ left: "38%", bottom: "10%", width: "24%", height: "32%" }}
-        aria-label="Феликс"
-      />
+      >
+        <FelixCharacter
+          state={felixTalking ? "talk" : "idle"}
+          onClick={handleFelixClick}
+          size={180}
+        />
+      </div>
     </div>
   );
 }
